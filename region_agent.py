@@ -6,9 +6,10 @@ import json
 
 
 class RegionAgent(Agent):
-    def __init__(self, ip, _pass):
+    def __init__(self, ip, _pass, name: str):
         Agent.__init__(self, ip, _pass)
         self._places_dict = {}
+        self._name = name
         for type in PlaceTypes:
             self._places_dict[type.name] = []
     def search_for_places(self, group_dict):
@@ -27,15 +28,13 @@ class RegionAgent(Agent):
 
     class RegionPlaceBehaviour(CyclicBehaviour):
         async def on_start(self):
-            print("Hell yeah, I am alive, region agent")
+            print(f"Hell yeah, I am alive, region {self.agent._name} agent")
 
         async def run(self):
             msg = await self.receive(timeout=3)
             if msg:
-
                 if msg.get_metadata("message_type") == "hello":
-                    print("Region received with content: {}".format(msg.body))
-                    print("I'm adding place")
+                    print(f"{self.agent._name}'s adding place: {msg.body}")
                     self.agent.add_place(msg.body)
 
                 if msg.get_metadata("message_type") == "goodbye":
@@ -71,7 +70,7 @@ class RegionAgent(Agent):
             await self.agent.stop()
 
     async def setup(self):
-        print(f"Region starting {self.jid}")
+        print(f"Region starting name: {self._name},jid: {self.jid}")
         rpb = self.RegionPlaceBehaviour()
         self.add_behaviour(rpb)
         rgb = self.RegionGroupBehaviour()

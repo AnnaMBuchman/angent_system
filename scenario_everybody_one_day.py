@@ -13,10 +13,6 @@ if __name__ == "__main__":
     places = 5
     users = 15
     leaders = 10
-    #address = "meeter@jabbim.pl/" do 10
-    #address ="meeter@jabber.hot-chilli.eu/"
-    #address = "meeter@chatserver.space/"
-    #address = "meeter@hell.la/" do 10
     address = "meeter@jabbers.one/"
     password = "asdfghjkl"
     try:
@@ -73,7 +69,7 @@ if __name__ == "__main__":
         group_agents.append(GroupAgent(address + str(i), password))
         future = group_agents[i - regions - places - users].start()
         future.result()
-        leaders_dict = LeaderAgentUtils.create_random_leader_dict(user_ids, address + str(i), region_agents_ids)
+        leaders_dict = LeaderAgentUtils.create_random_leader_dict_with_one_date(user_ids, address + str(i), region_agents_ids)
         leader_agents.append(LeaderAgent(address + str(i + leaders), password, leaders_dict))
         leader_agents[i - regions - places - users].start()
         time.sleep(1)

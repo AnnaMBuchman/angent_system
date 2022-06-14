@@ -1,16 +1,16 @@
+import randomname
+import json
+import random
 from spade.agent import Agent
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
-from place_types import *
-import json
-import random
 from group_agent import GroupAgentUtils
 from collections import Counter
 
 
 class LeaderAgentUtils:
     @staticmethod
-    def create_leader_dict(friends: list, date: str, leader_meeting_hours: (int, int), leader_duration: int,
+    def create_leader_dict(name: str, friends: list, date: str, leader_meeting_hours: (int, int), leader_duration: int,
                            group_agent_name: str, regions: dict):
 
         if leader_meeting_hours[0] < 0 | leader_meeting_hours[0] > 23 | leader_meeting_hours[1] < 0 | \
@@ -20,6 +20,7 @@ class LeaderAgentUtils:
             raise ValueError("Wrong open hours second value should be larger than first")
 
         return {
+            "name": name,
             "friends": friends,
             "date": date,
             "leader_meeting_hours": leader_meeting_hours,
@@ -43,10 +44,31 @@ class LeaderAgentUtils:
         if len(my_regions) == 0:
             my_regions["Mokotow"] = regions["Mokotow"]
         date = "2022-05-" + str(random.randint(1, 31))
-        meeting_hours = (random.randint(0, 18), random.randint(18, 23))
-        duration = random.randint(1, 4)
+        meeting_hours = (random.randint(0, 17), random.randint(19, 23))
+        duration = random.randint(1, 2)
+        name = randomname.get_name(noun=('fish'))
+        return LeaderAgentUtils.create_leader_dict(name, my_friends, date, meeting_hours, duration, group_agent_name,
+                                                   regions)
 
-        return LeaderAgentUtils.create_leader_dict(my_friends, date, meeting_hours, duration, group_agent_name, regions)
+    @staticmethod
+    def create_random_leader_dict_with_one_date(friends, group_agent_name, regions: dict, date="2022-05-7"):
+        my_friends = []
+        my_regions = {}
+        for friend in friends:
+            if random.choice([True, False]):
+                my_friends.append(friend)
+        if len(my_friends) == 0:
+            my_friends.append(friends[0])
+        for key, value in regions.items():
+            if random.choice([True, False]):
+                my_regions[key] = value
+        if len(my_regions) == 0:
+            my_regions["Mokotow"] = regions["Mokotow"]
+        meeting_hours = (random.randint(0, 17), random.randint(19, 23))
+        duration = random.randint(1, 2)
+        name = randomname.get_name(noun=('fish'))
+        return LeaderAgentUtils.create_leader_dict(name, my_friends, date, meeting_hours, duration, group_agent_name,
+                                                   regions)
 
 
 class LeaderAgent(Agent):
@@ -83,7 +105,8 @@ class LeaderAgent(Agent):
         num = len(self.yes_users_dict.keys())
         group_dict = GroupAgentUtils.create_group_dict(place_types, num, self._leader_dict["date"],
                                                        self._leader_dict["leader_meeting_hours"],
-                                                       self._leader_dict["leader_duration"], regions)
+                                                       self._leader_dict["leader_duration"], regions,
+                                                       self._leader_dict["name"])
         message_body = json.dumps(group_dict)
         msg.body = message_body
         return msg
@@ -93,43 +116,49 @@ class LeaderAgent(Agent):
             self.count_users_no = 0
             self.count_users_yes = 0
             messages = self.agent.ask_friends()
-            print(messages)
             for msg in messages:
                 await self.send(msg)
 
         async def run(self):
             msg = await self.receive(timeout=10)
             if msg:
-                print("Leader received with content: {}".format(msg.body))
                 if msg.get_metadata("message_type") == "user_invitation_answer":
                     self.count_users_yes += 1
                     body = json.loads(msg.body)
                     self.agent.yes_users_dict[str(msg.sender)] = body
                     if self.count_users_no + self.count_users_yes == len(self.agent._leader_dict["friends"]):
+                        print(f"yes users: {self.count_users_yes}, no users: {self.count_users_no}")
                         msg_group_agent = self.agent.create_group()
                         await self.send(msg_group_agent)
 
                 elif msg.get_metadata("message_type") == "no_user":
                     self.count_users_no += 1
                     if self.count_users_no == len(self.agent._leader_dict["friends"]):
-                        msg = Message(to=self._leader_dict["group_agent_name"])
+                        msg = Message(to=self.agent._leader_dict["group_agent_name"])
                         msg.set_metadata("message_type", "kill_yourself")
                         msg.body = "kill yourself"
                         await self.send(msg)
                         print("I have no good friends")
                         await self.agent.stop()
                     elif self.count_users_no + self.count_users_yes == len(self.agent._leader_dict["friends"]):
+                        print(f"yes users: {self.count_users_yes}, no users: {self.count_users_no}")
                         msg_group_agent = self.agent.create_group()
                         await self.send(msg_group_agent)
                 elif msg.get_metadata("message_type") == "reservation_made":
-                    print("I can happily die, My group has place to go")
+                    print(f"Leader {self.agent._leader_dict['name']} received with content: {msg.body}")
+                    print("I can happily die, my friends has place to go")
+                    await self.agent.stop()
+                elif msg.get_metadata("message_type") == "no_place_to_go":
+                    print("Leader received with content: {}".format(msg.body))
+                    print("I'm gonna kill myself, I hava no place to go with my friends")
                     await self.agent.stop()
 
         async def on_end(self):
-            print(f"Goodbye word, last words from leader agent: {str(self.agent.jid)}")
+            print(
+                f"Goodbye word, last words from leader agent name: {self.agent._leader_dict['name']}, jid: {str(self.agent.jid)}")
             await self.agent.stop()
 
     async def setup(self):
-        print(f"Leader starting {str(self.jid)}")
+        print(f"Leader starting name: {self._leader_dict['name']}, jid: {str(self.jid)}")
         cwfb = self.LeaderCommunicationBehaviour()
         self.add_behaviour(cwfb)

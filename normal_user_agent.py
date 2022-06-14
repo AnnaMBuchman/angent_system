@@ -14,7 +14,7 @@ class NormalUserAgent(Agent):
     def invitation_answer_leader(self, msg_receive):
         sender = str(msg_receive.sender)
         msg = Message(to=sender)
-        if random.choice([True, False]):
+        if random.choice([True, True, True, False]):
             body = json.loads(msg_receive.body)
             region = random.choice(list(body["regions"].keys()))
             start_time = random.randint(body["leader_meeting_hours"][0],
@@ -39,7 +39,7 @@ class NormalUserAgent(Agent):
         async def run(self):
             msg = await self.receive(timeout=10)
             if msg:
-                print("User received with content: {}".format(msg.body))
+                #print("User received with content: {}".format(msg.body))
                 if msg.get_metadata("message_type") == "leader_invitation":
                     answer = self.agent.invitation_answer_leader(msg)
                     await self.send(answer)
@@ -49,6 +49,6 @@ class NormalUserAgent(Agent):
             await self.agent.stop()
 
     async def setup(self):
-        print(f"User starting {str(self.jid)}")
+        print(f"User is starting {str(self.jid)}")
         cwlb = self.CommunicationWithLeaderBehaviour()
         self.add_behaviour(cwlb)
