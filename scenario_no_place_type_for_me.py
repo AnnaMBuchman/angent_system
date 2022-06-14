@@ -19,12 +19,12 @@ if __name__ == "__main__":
         opts, args = getopt.getopt(sys.argv[1:], "hr:p:u:l:", ["regions=", "places=", "users=", "leaders="])
     except getopt.GetoptError:
         print
-        'scenario_no_place_type_for_me.py  -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>'
+        'scenario_everybody_one_day.py  -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>'
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
             print
-            'scenario_no_place_type_for_me.py  -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>'
+            'scenario_everybody_one_day.py -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>'
             sys.exit()
         elif opt in ("-r", "--regions"):
             regions = int(arg)
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     place_agents_ids = []
     for i in range(regions, regions + places):
         rand_region = random.randint(1, regions)
-        place_dict = PlaceAgentUtils.generate_random_place_dict(str(region_agents[RegionNames(rand_region).name].jid))
+        place_dict = PlaceAgentUtils.generate_random_place_dict_one_type(str(region_agents[RegionNames(rand_region).name].jid))
         place_agents.append(PlaceAgent(address + str(i), password, place_dict))
         place_agents_ids.append(address + str(i))
         future = place_agents[i - regions].start()

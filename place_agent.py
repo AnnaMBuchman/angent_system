@@ -46,6 +46,25 @@ class PlaceAgentUtils:
             "special_price": {}
         }
 
+    @staticmethod
+    def generate_random_place_dict_one_type(region_agent_name):
+        place_name = randomname.get_name(noun=('gaming', 'music_instruments', 'astronomy'))
+        location = (random.uniform(51.0, 53.0), random.uniform(51.0, 53.0))
+        number_of_guests = random.randint(5, 20)
+        open_hour = random.randint(0, 18)
+        close_hour = random.randint(open_hour, 23)
+        price_per_person = random.randint(3, 40)
+        return {
+            "place_name": place_name,
+            "place_type": 'EscapeRoom',
+            "location": location,
+            "number_of_guests": number_of_guests,
+            "open_hours": (open_hour, close_hour),
+            "region_agent_name": region_agent_name,
+            "price_per_person": price_per_person,
+            "special_price": {}
+        }
+
 
 class PlaceAgent(Agent):
     def __init__(self, ip, _pass, place_dict: dict):
