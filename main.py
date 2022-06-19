@@ -13,12 +13,8 @@ if __name__ == "__main__":
     places = 5
     users = 15
     leaders = 10
-    # address = "meeter@jabbim.pl/" do 10
-    # address ="meeter@jabber.hot-chilli.eu/"
-    # address = "meeter@chatserver.space/"
-    # address = "meeter@hell.la/" do 10
-    address = "meeter@jabbers.one/"
-    password = "asdfghjkl"
+    address = "<XMPP mail>"
+    password = "<password>"
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:p:u:l:", ["regions=", "places=", "users=", "leaders="])
     except getopt.GetoptError:

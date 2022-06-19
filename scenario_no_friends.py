@@ -12,8 +12,8 @@ if __name__ == "__main__":
     places = 5
     users = 2
     leaders = 10
-    address = "meeter@jabbers.one/"
-    password = "asdfghjkl"
+    address = "<XMPP mail>"
+    password = "<password>"
     region_agents = {}
     region_agents_ids = {}
     for i in range(regions):
