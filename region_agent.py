@@ -12,17 +12,20 @@ class RegionAgent(Agent):
         self._name = name
         for type in PlaceTypes:
             self._places_dict[type.name] = []
+
     def search_for_places(self, group_dict):
         jids = []
         for type in group_dict["place_types"]:
             for place_dict in self._places_dict[type]:
                 if place_dict["number_of_guests"] > group_dict["number_of_guests"]:
-                    for i in range(group_dict["meeting_hours"][0], group_dict["meeting_hours"][1]-group_dict["duration"]):
+                    for i in range(group_dict["meeting_hours"][0],
+                                   group_dict["meeting_hours"][1] - group_dict["duration"]):
                         if i >= place_dict["open_hours"][0] & i + group_dict["duration"] <= place_dict["open_hours"][1]:
                             jids.append(place_dict["id"])
                             break
         return jids
-    def add_place(self, body:str):
+
+    def add_place(self, body: str):
         place_dict = json.loads(body)
         self._places_dict[place_dict["place_type"]].append(place_dict)
 

@@ -8,13 +8,13 @@ from regions_names import RegionNames
 
 
 class NormalUserAgent(Agent):
-    def __init__(self, ip, _pass,):
+    def __init__(self, ip, _pass, ):
         Agent.__init__(self, ip, _pass)
 
     def invitation_answer_leader(self, msg_receive):
         sender = str(msg_receive.sender)
         msg = Message(to=sender)
-        if random.choice([True, True, True, False]):
+        if random.choice([True, True, False]):
             body = json.loads(msg_receive.body)
             region = random.choice(list(body["regions"].keys()))
             start_time = random.randint(body["leader_meeting_hours"][0],
@@ -39,7 +39,7 @@ class NormalUserAgent(Agent):
         async def run(self):
             msg = await self.receive(timeout=10)
             if msg:
-                #print("User received with content: {}".format(msg.body))
+                # print("User received with content: {}".format(msg.body))
                 if msg.get_metadata("message_type") == "leader_invitation":
                     answer = self.agent.invitation_answer_leader(msg)
                     await self.send(answer)

@@ -13,22 +13,20 @@ if __name__ == "__main__":
     places = 5
     users = 15
     leaders = 10
-    #address = "meeter@jabbim.pl/" do 10
-    #address ="meeter@jabber.hot-chilli.eu/"
-    #address = "meeter@chatserver.space/"
-    #address = "meeter@hell.la/" do 10
+    # address = "meeter@jabbim.pl/" do 10
+    # address ="meeter@jabber.hot-chilli.eu/"
+    # address = "meeter@chatserver.space/"
+    # address = "meeter@hell.la/" do 10
     address = "meeter@jabbers.one/"
     password = "asdfghjkl"
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:p:u:l:", ["regions=", "places=", "users=", "leaders="])
     except getopt.GetoptError:
-        print
-        'main.py -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>'
+        print('main.py -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print
-            'main.py -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>'
+            print('main.py -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>')
             sys.exit()
         elif opt in ("-r", "--regions"):
             regions = int(arg)

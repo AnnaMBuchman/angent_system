@@ -103,8 +103,6 @@ class PlaceAgent(Agent):
             if int(self._today.split('-')[2]) <= int(group_dict["date"].split('-')[2]):
                 return True
             else:
-                print(self._today.split('-')[2])
-                print(group_dict["date"].split('-')[2])
                 print(f"this date {group_dict['date']} is from past, today is {self._today}")
         else:
             print(f"I have no place on that date")

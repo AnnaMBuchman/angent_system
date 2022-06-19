@@ -1,5 +1,4 @@
 import time
-import sys, getopt
 from place_agent import *
 from region_agent import *
 from group_agent import *
@@ -15,25 +14,6 @@ if __name__ == "__main__":
     leaders = 10
     address = "meeter@jabbers.one/"
     password = "asdfghjkl"
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hr:p:u:l:", ["regions=", "places=", "users=", "leaders="])
-    except getopt.GetoptError:
-        print
-        'scenario_no_place_type_for_me.py  -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>'
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print
-            'scenario_no_place_type_for_me.py  -r <number_of_regions> -p <number_of_places> -u <number_of_users> -l <number_of_leaders>'
-            sys.exit()
-        elif opt in ("-r", "--regions"):
-            regions = int(arg)
-        elif opt in ("-p", "--places"):
-            places = int(arg)
-        elif opt in ("-u", "--users"):
-            users = int(arg)
-        elif opt in ("-l", "--leaders"):
-            leaders = int(arg)
     region_agents = {}
     region_agents_ids = {}
     for i in range(regions):
@@ -69,7 +49,8 @@ if __name__ == "__main__":
         group_agents.append(GroupAgent(address + str(i), password))
         future = group_agents[i - regions - places - users].start()
         future.result()
-        leaders_dict = LeaderAgentUtils.create_random_leader_dict_with_one_date(user_ids, address + str(i), region_agents_ids)
+        leaders_dict = LeaderAgentUtils.create_random_leader_dict_with_specific_date(user_ids, address + str(i),
+                                                                                region_agents_ids)
         leader_agents.append(LeaderAgent(address + str(i + leaders), password, leaders_dict))
         leader_agents[i - regions - places - users].start()
         time.sleep(1)

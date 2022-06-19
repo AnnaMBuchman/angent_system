@@ -9,6 +9,7 @@ class ClockAgent(Agent):
         Agent.__init__(self, ip, _pass)
         self._places = places
         self._day = 2
+
     def clock_tick(self):
         messages = []
         for place in self._places:
@@ -18,11 +19,11 @@ class ClockAgent(Agent):
             messages.append(msg)
         self._day += 1
         return messages
+
     class ClockBehaviour(PeriodicBehaviour):
         async def run(self):
             for msg in self.agent.clock_tick():
                 await self.send(msg)
-
 
     async def setup(self):
         print(f"Clock is starting {str(self.jid)}")

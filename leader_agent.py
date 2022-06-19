@@ -51,7 +51,7 @@ class LeaderAgentUtils:
                                                    regions)
 
     @staticmethod
-    def create_random_leader_dict_with_one_date(friends, group_agent_name, regions: dict, date="2022-05-7"):
+    def create_random_leader_dict_with_specific_date(friends, group_agent_name, regions: dict, date="2022-05-7"):
         my_friends = []
         my_regions = {}
         for friend in friends:
@@ -138,6 +138,7 @@ class LeaderAgent(Agent):
                         msg.set_metadata("message_type", "kill_yourself")
                         msg.body = "kill yourself"
                         await self.send(msg)
+                        print(f"yes users: {self.count_users_yes}, no users: {self.count_users_no}")
                         print("I have no good friends")
                         await self.agent.stop()
                     elif self.count_users_no + self.count_users_yes == len(self.agent._leader_dict["friends"]):
